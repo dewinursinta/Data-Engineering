@@ -1,0 +1,24 @@
+#mean,median,dan standar deviasi dari durasi perjalanan (trip_seconds) untuk perjalanan yang dilakukan pada hari Senin dan Sabtu
+SELECT
+  'Saturday' AS weekday,
+  AVG(trip_seconds) AS avg_seconds,
+  APPROX_QUANTILES(trip_seconds, 2)[OFFSET(1)] AS median_seconds,
+  STDDEV(trip_seconds) AS stddev_seconds
+FROM
+  `bigquery-public-data.chicago_taxi_trips.taxi_trips`
+WHERE
+  EXTRACT(DAYOFWEEK FROM trip_start_timestamp) = 7
+  AND trip_seconds IS NOT NULL
+
+UNION ALL
+
+  SELECT
+  'Monday' AS weekday,
+  AVG(trip_seconds) AS avg_seconds,
+  APPROX_QUANTILES(trip_seconds, 2)[OFFSET(1)] AS median_seconds,
+  STDDEV(trip_seconds) AS stddev_seconds
+FROM
+  `bigquery-public-data.chicago_taxi_trips.taxi_trips`
+WHERE
+  EXTRACT(DAYOFWEEK FROM trip_start_timestamp) = 2
+  AND trip_seconds IS NOT NULL;
